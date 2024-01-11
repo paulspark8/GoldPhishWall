@@ -11,6 +11,7 @@ def filter_message_size():
     pass
 
 def filter_message_language():
+    # chardet find
     pass
 
 def filter_subject_header():

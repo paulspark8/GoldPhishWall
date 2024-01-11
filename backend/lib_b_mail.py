@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from enum import Enum
 from email.header import decode_header
 
+import chardet
+
 
 class Log_type(Enum):
     DEBUG = 0
@@ -16,7 +18,7 @@ class Log_type(Enum):
 def get_mail_text(mail: email.message.Message):
     # Get subject
     text = _get_decode_mail_subject(mail).replace("\n", " ") + "\n\n"
-    text += str(_parse_mail_text(mail))
+    text += _parse_mail_text(mail)
 
     return text
 
@@ -32,7 +34,17 @@ def _get_decode_mail_subject(mail: email.message.Message) -> str:
         return "[WARNING] Subject error or no subject"
 
 def _parse_mail_text(mail: email.message.Message) -> str:
-    pass
+    text = ''
+    if not mail.is_multipart():
+        text = mail.get_payload()
+    for part in mail.walk():
+        content_type = part.get_content_type()
+        if content_type in ['text/html', 'text/plain']:
+            text+=part.get_payload(decode=True).decode(errors='ignore')+'\n'
+            # break
+        elif "multipart" not in content_type:
+            text+=part.get_content_type()
+    return text
 
 def create_log_entry(type: Log_type):
     pass
