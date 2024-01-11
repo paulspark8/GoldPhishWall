@@ -17,7 +17,8 @@ class Log_type(Enum):
 
 def get_mail_text(mail: email.message.Message):
     # Get subject
-    text = _get_decode_mail_subject(mail).replace("\n", " ") + "\n\n"
+    text = ''
+    # text = _get_decode_mail_subject(mail).replace("\n", " ") + "\n\n"
     text += _parse_mail_text(mail)
 
     return text
@@ -33,14 +34,22 @@ def _get_decode_mail_subject(mail: email.message.Message) -> str:
     except Exception:
         return "[WARNING] Subject error or no subject"
 
+def _convert_html_2_text(text: str) -> str:
+    text = text.lower()
+    if not any(tag in text  for tag in ['<html', '<body', '<head', '<div', '<p', '<table']):
+        return text
+    return ''
+    
+
 def _parse_mail_text(mail: email.message.Message) -> str:
     text = ''
     if not mail.is_multipart():
-        text = mail.get_payload()
+        text = _convert_html_2_text(mail.get_payload())
     for part in mail.walk():
         content_type = part.get_content_type()
         if content_type in ['text/html', 'text/plain']:
-            text+=part.get_payload(decode=True).decode(errors='ignore')+'\n'
+            text+=_convert_html_2_text(part.get_payload(decode=True).decode(errors='ignore')+'\n')
+            
             # break
         elif "multipart" not in content_type:
             text+=part.get_content_type()
