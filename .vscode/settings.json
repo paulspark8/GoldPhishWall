@@ -1,11 +1,3 @@
 {
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./backend",
-        "-p",
-        "test_*.py"
-    ],
-    "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.REPL.enableREPLSmartSend": false
 }
