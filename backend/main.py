@@ -9,6 +9,6 @@ if __name__ == "__main__":
     for mail in mailbox:
         print('==================')
         print(mail['message-id'], mail['X-FDA'])
-        print(get_mail_text(mail))
+        get_mail_text(mail)
         print('==================')
         # break
